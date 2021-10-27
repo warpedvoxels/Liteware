@@ -16,7 +16,7 @@ allprojects {
 
     dependencies {
         testImplementation(kotlin("test"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versioning.Serialization}")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versioning.Coroutines}")
     }
 
     tasks.test {
