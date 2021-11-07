@@ -1,6 +1,6 @@
 package me.hexalite.liteware.protocol.packet
 
-import me.hexalite.liteware.protocol.binary.MinecraftPacketCodec
+import me.hexalite.liteware.protocol.codec.MinecraftPacketCodec
 
 object EmptyMinecraftPacket: MinecraftPacket {
     override val id: Int

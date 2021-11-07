@@ -1,4 +1,4 @@
-package me.hexalite.liteware.protocol.binary
+package me.hexalite.liteware.protocol.codec
 
 import io.ktor.utils.io.core.*
 import me.hexalite.liteware.protocol.packet.EmptyMinecraftPacket
