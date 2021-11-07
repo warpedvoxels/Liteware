@@ -25,7 +25,7 @@ fun VarInt(int: Int): VarInt {
 }
 
 @OptIn(ExperimentalIoApi::class)
-fun BytePacketBuilder.encodeVarInt(varInt: VarInt) {
+fun BytePacketBuilder.writeVarInt(varInt: VarInt) {
     var value = varInt.integer
 
     while (true) {
@@ -38,7 +38,7 @@ fun BytePacketBuilder.encodeVarInt(varInt: VarInt) {
     }
 }
 
-fun ByteReadPacket.decodeVarInt(): VarInt {
+fun ByteReadPacket.readVarInt(): VarInt {
     var value = 0
     var offset = 0
 

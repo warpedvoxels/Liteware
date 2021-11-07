@@ -17,7 +17,7 @@ value class UnsignedVarLong(override val long: Long) : VarLong
 fun VarLong(long: Long) = if (long < 0) SignedVarLong(long) else UnsignedVarLong(long)
 
 @OptIn(ExperimentalIoApi::class)
-fun BytePacketBuilder.encodeVarLong(varLong: VarLong) {
+fun BytePacketBuilder.writeVarLong(varLong: VarLong) {
     var value = varLong.long
     while (true) {
         if ((value and -0x80) == 0L) {
@@ -29,7 +29,7 @@ fun BytePacketBuilder.encodeVarLong(varLong: VarLong) {
     }
 }
 
-fun ByteReadPacket.decodeVarLong(): VarLong {
+fun ByteReadPacket.readVarLong(): VarLong {
     var value = 0L
     var offset = 0
 
