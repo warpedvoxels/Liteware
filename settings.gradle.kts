@@ -1,3 +1,3 @@
 rootProject.name = "server-software"
 
-include("protocol", "network", "core")
+include("api", "protocol", "network", "core")

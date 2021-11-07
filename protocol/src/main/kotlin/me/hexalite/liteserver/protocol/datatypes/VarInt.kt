@@ -1,4 +1,4 @@
-package me.hexalite.software.protocol.datatypes
+package me.hexalite.liteserver.protocol.datatypes
 
 import io.ktor.utils.io.core.*
 import kotlin.experimental.and
@@ -38,18 +38,18 @@ fun BytePacketBuilder.encodeVarInt(varInt: VarInt) {
 }
 
 fun ByteReadPacket.decodeVarInt(): VarInt {
-    var value = 0L
+    var value = 0
     var offset = 0
-    var byte: Byte
 
-    do {
+    while (true) {
         if (offset == 35) {
             throw InvalidDataTypeException("Invalid (un)signed VarInt (must be in -2147483648..2147483647).")
         }
-        byte = readByte()
-        value = value or ((byte.toLong() and 0x7FL) shl offset)
+        val b = readByte()
+        value = value or ((b and 0x7F).toInt() shl offset)
+        if ((b and 0x80.toByte()) == 0.toByte()) {
+            return VarInt(value)
+        }
         offset += 7
-    } while ((byte and 128.toByte()) != 0.toByte())
-
-    return VarInt(value.toInt())
+    }
 }
