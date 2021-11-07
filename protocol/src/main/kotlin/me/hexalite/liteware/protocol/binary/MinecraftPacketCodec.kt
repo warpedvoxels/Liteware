@@ -3,14 +3,24 @@ package me.hexalite.liteware.protocol.binary
 import io.ktor.utils.io.core.*
 import me.hexalite.liteware.protocol.packet.MinecraftPacket
 
-sealed class MinecraftPacketCodec {
+sealed interface MinecraftPacketCodec {
 
-    abstract class Encoder: MinecraftPacketCodec() {
-        abstract fun Output.encode(packet: MinecraftPacket)
+    interface Encoder : MinecraftPacketCodec {
+        fun Output.encode(packet: MinecraftPacket)
     }
 
-    abstract class Decoder: MinecraftPacketCodec() {
-        abstract fun Input.decode(): MinecraftPacket
+    interface Decoder : MinecraftPacketCodec {
+        fun Input.decode(): MinecraftPacket
     }
 
 }
+
+inline fun MinecraftPacketCodec.encode(output: Output, packet: MinecraftPacket) =
+    with(this as MinecraftPacketCodec.Encoder) {
+        output.encode(packet)
+    }
+
+inline fun MinecraftPacketCodec.decode(input: Input) =
+    with(this as MinecraftPacketCodec.Decoder) {
+        input.decode()
+    }
