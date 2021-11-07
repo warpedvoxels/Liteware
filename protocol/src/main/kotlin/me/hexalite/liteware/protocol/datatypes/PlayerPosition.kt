@@ -20,11 +20,17 @@ private fun BytePacketBuilder.writeVector3D(vector: Vector3D) {
 
 private fun ByteReadPacket.readVector3D() = Vector3D(readFloat(), readFloat(), readFloat())
 
+@OptIn(ExperimentalIoApi::class)
 fun BytePacketBuilder.writePlayerPosition(playerPosition: PlayerPosition) {
     writeVector3D(playerPosition.vector)
-    writeFloat(playerPosition.pitch)
-    writeFloat(playerPosition.headYaw)
-    writeFloat(playerPosition.yaw)
+    writeByte(playerPosition.pitch.toInt().toByte())
+    writeByte(playerPosition.headYaw.toInt().toByte())
+    writeByte(playerPosition.yaw.toInt().toByte())
 }
 
-fun ByteReadPacket.readPlayerPosition() = PlayerPosition(readVector3D(), readFloat(), readFloat(), readFloat())
+fun ByteReadPacket.readPlayerPosition() = PlayerPosition(
+    readVector3D(),
+    readByte() / 0.71f,
+    readByte() / 0.71f,
+    readByte() / 0.71f
+)
