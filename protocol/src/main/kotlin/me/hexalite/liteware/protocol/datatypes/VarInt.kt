@@ -6,6 +6,8 @@ import kotlin.experimental.and
 
 interface VarInt {
     val integer: Int
+
+    fun toInt() = integer
 }
 
 @JvmInline
