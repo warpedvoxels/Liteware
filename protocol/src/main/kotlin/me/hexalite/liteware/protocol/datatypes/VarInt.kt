@@ -1,6 +1,7 @@
-package me.hexalite.liteserver.protocol.datatypes
+package me.hexalite.liteware.protocol.datatypes
 
 import io.ktor.utils.io.core.*
+import me.hexalite.liteware.protocol.exception.InvalidDataTypeException
 import kotlin.experimental.and
 
 interface VarInt {

@@ -1,3 +1,3 @@
-rootProject.name = "server-software"
+rootProject.name = "liteware"
 
 include("api", "protocol", "network", "core")
