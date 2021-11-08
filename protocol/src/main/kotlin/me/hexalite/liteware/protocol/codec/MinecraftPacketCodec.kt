@@ -6,21 +6,21 @@ import me.hexalite.liteware.protocol.packet.MinecraftPacket
 sealed interface MinecraftPacketCodec {
 
     interface Encoder : MinecraftPacketCodec {
-        fun Output.encode(packet: MinecraftPacket)
+        fun BytePacketBuilder.encode(packet: MinecraftPacket)
     }
 
     interface Decoder : MinecraftPacketCodec {
-        fun Input.decode(): MinecraftPacket
+        fun ByteReadPacket.decode(): MinecraftPacket
     }
 
 }
 
-inline fun MinecraftPacketCodec.encode(output: Output, packet: MinecraftPacket) =
+inline fun MinecraftPacketCodec.encoder(output: BytePacketBuilder, packet: MinecraftPacket) =
     with(this as MinecraftPacketCodec.Encoder) {
         output.encode(packet)
     }
 
-inline fun MinecraftPacketCodec.decode(input: Input) =
+inline fun MinecraftPacketCodec.decoder(input: ByteReadPacket) =
     with(this as MinecraftPacketCodec.Decoder) {
         input.decode()
     }

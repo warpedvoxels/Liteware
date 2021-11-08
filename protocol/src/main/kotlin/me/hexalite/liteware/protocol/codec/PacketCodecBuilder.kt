@@ -4,20 +4,20 @@ import io.ktor.utils.io.core.*
 import me.hexalite.liteware.protocol.packet.EmptyMinecraftPacket
 import me.hexalite.liteware.protocol.packet.MinecraftPacket
 
-typealias EncoderInstruction = Output.(packet: MinecraftPacket) -> Unit
+typealias EncoderInstruction = BytePacketBuilder.(packet: MinecraftPacket) -> Unit
 
-typealias DecoderInstruction = Input.() -> MinecraftPacket
+typealias DecoderInstruction = ByteReadPacket.() -> MinecraftPacket
 
 data class PacketCodecBuilder(
     var encoderInstruction: EncoderInstruction = { },
     var decoderInstruction: DecoderInstruction = { EmptyMinecraftPacket }
 ) {
 
-    fun encode(instruction: EncoderInstruction) {
+    fun encoder(instruction: EncoderInstruction) {
         encoderInstruction = instruction
     }
 
-    fun decode(instruction: DecoderInstruction) {
+    fun decoder(instruction: DecoderInstruction) {
         decoderInstruction = instruction
     }
 
@@ -29,9 +29,9 @@ class CallbackBasedPacketCodec(
     private val encoder: EncoderInstruction, private val decoder: DecoderInstruction
 ) : MinecraftPacketCodec.Decoder, MinecraftPacketCodec.Encoder {
 
-    override fun Input.decode(): MinecraftPacket = decoder(this)
+    override fun ByteReadPacket.decode(): MinecraftPacket = decoder(this)
 
-    override fun Output.encode(packet: MinecraftPacket) = encoder(packet)
+    override fun BytePacketBuilder.encode(packet: MinecraftPacket) = encoder(packet)
 
 }
 
