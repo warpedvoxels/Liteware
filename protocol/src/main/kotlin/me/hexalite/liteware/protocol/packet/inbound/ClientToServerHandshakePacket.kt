@@ -6,14 +6,14 @@ import me.hexalite.liteware.protocol.codec.MinecraftPacketCodec
 import me.hexalite.liteware.protocol.packet.InboundPacket
 
 @MinecraftPacketInfo(0x04)
-object ClientToServerHandshake: InboundPacket() {
+object ClientToServerHandshakePacket: InboundPacket() {
 
-    object Codec: MinecraftPacketCodec<ClientToServerHandshake>() {
-        override fun ByteReadPacket.decode(): ClientToServerHandshake {
-            return ClientToServerHandshake
+    object Codec: MinecraftPacketCodec<ClientToServerHandshakePacket>() {
+        override fun ByteReadPacket.decode(): ClientToServerHandshakePacket {
+            return ClientToServerHandshakePacket
         }
 
-        override fun BytePacketBuilder.encode(packet: ClientToServerHandshake) {
+        override fun BytePacketBuilder.encode(packet: ClientToServerHandshakePacket) {
             // no-op
         }
     }
