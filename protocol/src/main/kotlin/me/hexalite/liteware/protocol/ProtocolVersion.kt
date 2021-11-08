@@ -13,4 +13,8 @@ enum class ProtocolVersion(val protocolId: Int) {
     Bedrock_1_17_30_to_1_17_34(465),
     Bedrock_1_17_40_to_1_17_41(471);
 
+    companion object {
+        operator fun get(protocolId: Int) = values().firstOrNull { it.protocolId == protocolId }
+    }
+
 }

@@ -17,13 +17,16 @@ value class SignedVarInt(override val integer: Int) : VarInt
 value class UnsignedVarInt(override val integer: Int) : VarInt
 
 fun VarInt(int: Int): VarInt {
-    if (int in -2147483648..2147483647) {
+    if(int < 0) {
+        if(int < -2147483648) {
+            throw InvalidDataTypeException("Invalid VarInt (must be in -2147483648..4294967295).")
+        }
         return SignedVarInt(int)
     }
-    if (int in 0..4294967295) {
-        return UnsignedVarInt(int)
+    if (int > 4294967295) {
+        throw InvalidDataTypeException("Invalid VarInt (must be in -2147483648..4294967295).")
     }
-    throw InvalidDataTypeException("Invalid VarInt (must be in -2147483648..2147483647 or 0..4294967295).")
+    return UnsignedVarInt(int)
 }
 
 @OptIn(ExperimentalIoApi::class)
