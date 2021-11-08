@@ -5,4 +5,5 @@ plugins {
 dependencies {
     implementation("io.ktor:ktor-io:${Versioning.Ktor}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versioning.Serialization}")
+    implementation(kotlin("reflect"))
 }

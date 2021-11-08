@@ -1,41 +1,34 @@
 package me.hexalite.liteware.protocol.packet.inbound
 
+import io.ktor.utils.io.core.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.hexalite.liteware.protocol.codec.codec
+import me.hexalite.liteware.protocol.annotations.MinecraftPacketInfo
+import me.hexalite.liteware.protocol.codec.MinecraftPacketCodec
 import me.hexalite.liteware.protocol.datatypes.readIntBigEndian
 import me.hexalite.liteware.protocol.datatypes.readMinecraftString
 import me.hexalite.liteware.protocol.datatypes.writeIntBigEndian
 import me.hexalite.liteware.protocol.datatypes.writeMinecraftString
 import me.hexalite.liteware.protocol.packet.InboundPacket
 
-data class LoginPacket(
-    val protocolVersion: Int,
-    val chainData: List<String>,
-    val skinData: String
-) : InboundPacket() {
+@MinecraftPacketInfo(id = 0x01)
+data class LoginPacket(val protocolVersion: Int, val chainData: List<String>, val skinData: String) : InboundPacket() {
 
-    override val id: Int
-        get() = 0x01
+    companion object Codec: MinecraftPacketCodec<LoginPacket>() {
 
-    override val codec = codec {
-        encoder {
+        override fun BytePacketBuilder.encode(packet: LoginPacket) = with(packet) {
             writeIntBigEndian(protocolVersion)
             writeMinecraftString(Json.encodeToString(chainData))
             writeMinecraftString(skinData)
         }
-        decoder {
-            LoginPacket(
-                readIntBigEndian(),
-                Json.decodeFromString(readMinecraftString()),
-                readMinecraftString()
-            )
-        }
-    }
 
-    companion object {
-        val Empty = LoginPacket(0, listOf(), "")
+        override fun ByteReadPacket.decode() = LoginPacket(
+            readIntBigEndian(),
+            Json.decodeFromString(readMinecraftString()),
+            readMinecraftString()
+        )
+
     }
 
 }

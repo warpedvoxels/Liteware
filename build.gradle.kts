@@ -16,6 +16,7 @@ allprojects {
 
     dependencies {
         testImplementation(kotlin("test"))
+        implementation(kotlin("reflect"))
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versioning.Coroutines}")
     }
 
