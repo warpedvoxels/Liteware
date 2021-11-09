@@ -1,7 +1,7 @@
 package me.hexalite.liteware.network.udp
 
 import io.ktor.network.sockets.*
-import me.hexalite.liteware.network.raknet.LitewareRakNetServer
+import me.hexalite.liteware.network.LitewareRakNetServer
 
 sealed interface UDPServerEvent<T> {
     val data: T

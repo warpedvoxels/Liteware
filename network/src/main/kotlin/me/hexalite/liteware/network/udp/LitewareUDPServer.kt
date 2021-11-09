@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import me.hexalite.liteware.network.LitewareRakNetServer
+import me.hexalite.liteware.network.RakNetServerInfo
 import me.hexalite.liteware.network.pipeline.PipelineExecutor
-import me.hexalite.liteware.network.raknet.LitewareRakNetServer
-import me.hexalite.liteware.network.raknet.RakNetServerInfo
 import java.net.InetSocketAddress
 
 class LitewareUDPServer(private val rakNetServer: LitewareRakNetServer, val rakNetServerInfo: RakNetServerInfo) {
@@ -25,12 +25,8 @@ class LitewareUDPServer(private val rakNetServer: LitewareRakNetServer, val rakN
     private var job: Job? = null
     val events = MutableSharedFlow<UDPServerEvent<*>>()
 
-    inline fun <reified T : UDPServerEvent<*>> pipeline(launchIn: CoroutineScope, pipeline: PipelineExecutor<T>) {
-        events
-            .filterIsInstance<T>()
-            .onEach { pipeline.middleware(it) }
-            .launchIn(launchIn)
-    }
+    inline fun <reified T : UDPServerEvent<*>> pipeline(launchIn: CoroutineScope, pipeline: PipelineExecutor<T>) =
+        events.filterIsInstance<T>().onEach { pipeline.middleware(it) }.launchIn(launchIn)
 
     fun start(scope: CoroutineScope, job: Job) = scope.also {
         this.job = job

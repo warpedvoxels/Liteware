@@ -2,9 +2,8 @@
 package me.hexalite.liteware.network.session
 
 import kotlinx.coroutines.flow.firstOrNull
-import me.hexalite.liteware.network.raknet.LitewareRakNetServer
+import me.hexalite.liteware.network.LitewareRakNetServer
 import java.net.SocketAddress
 
-suspend fun LitewareRakNetServer.getCurrentSessionOrNull(address: SocketAddress): NetworkPlayerSession? {
-    return sessions.firstOrNull { it.address == address }
-}
+suspend fun LitewareRakNetServer.findCurrentSessionOrNull(address: SocketAddress): NetworkPlayerSession? =
+    sessions.firstOrNull { it.address == address }

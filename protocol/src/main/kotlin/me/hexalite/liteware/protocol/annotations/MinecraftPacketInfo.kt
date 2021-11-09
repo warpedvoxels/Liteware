@@ -1,5 +1,5 @@
 package me.hexalite.liteware.protocol.annotations
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class MinecraftPacketInfo(val id: Int)

@@ -1,4 +1,4 @@
-package me.hexalite.liteware.network.raknet
+package me.hexalite.liteware.network
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

@@ -1,7 +1,7 @@
 package me.hexalite.liteware.network.pipeline
 
 import me.hexalite.liteware.network.udp.UDPServerEvent
+import me.hexalite.liteware.network.utils.Executor
 
-interface PipelineExecutor<T: UDPServerEvent<*>> {
-    suspend fun middleware(event: T)
-}
+fun interface PipelineExecutor<T: UDPServerEvent<*>>: Executor<T>
+
