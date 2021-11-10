@@ -27,15 +27,3 @@ class LitewareNetworkBootstrap(val flags: List<BootstrapFlag> = emptyList(), val
     }
 
 }
-
-// for testing purposes only
-/*suspend fun main() {
-    val bootstrap = LitewareNetworkBootstrap(emptyList(), RakNetServerInfo(hostname = "localhost", port = 19132))
-    bootstrap.boot()
-
-    Thread {
-        while (true) {
-            println("-> ${readLine()}")
-        }
-    }.run()
-}*/
