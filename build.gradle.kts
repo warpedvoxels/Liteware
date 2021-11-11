@@ -15,6 +15,7 @@ allprojects {
     tasks.shadowJar {
         minimize()
         archiveFileName.set("liteware-${archiveFileName.get()}")
+        from(rootProject.fileTree("licenses"))
     }
 
     repositories {
