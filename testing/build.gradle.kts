@@ -4,10 +4,8 @@ dependencies {
     api(project(":protocol"))
 }
 
-tasks {
-    shadowJar {
-        manifest {
-            attributes(Pair("Main-Class", "me.hexalite.liteware.testing.LitewareBootstrapTestKt"))
-        }
+tasks.shadowJar {
+    manifest {
+        attributes(Pair("Main-Class", "me.hexalite.liteware.testing.LitewareBootstrapTestKt"))
     }
 }

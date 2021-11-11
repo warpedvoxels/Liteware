@@ -12,8 +12,10 @@ allprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "com.github.johnrengelman.shadow")
 
-    group = "me.hexalite"
-    version = "1.0-SNAPSHOT"
+    tasks.shadowJar {
+        minimize()
+        archiveFileName.set("liteware-${archiveFileName.get()}")
+    }
 
     repositories {
         mavenCentral()

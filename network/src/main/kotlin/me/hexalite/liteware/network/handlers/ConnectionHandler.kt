@@ -3,7 +3,7 @@
 package me.hexalite.liteware.network.handlers
 
 import io.ktor.utils.io.core.*
-import me.hexalite.liteware.api.LitewareAPI
+import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.bootstrap.LitewareNetworkBootstrap
 import me.hexalite.liteware.network.datatypes.Magic
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionReplyOne
@@ -27,7 +27,7 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
             rakNet.send(reply)
         }
 
-        LitewareAPI.logger.info("Received a connection (1). ($protocol/$mtu, ${details.clientAddress})")
+        logger.info("Received a connection (1). ($protocol/$mtu, ${details.clientAddress})")
         val reply = OpenConnectionReplyOne(Magic, details.server.guid, mtu, details)
         rakNet.send(reply)
 
@@ -42,11 +42,11 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
             rakNet.send(reply)
         }
 
-        LitewareAPI.logger.info("Received a connection (2). ($mtu, ${details.clientAddress})")
+        logger.info("Received a connection (2). ($mtu, ${details.clientAddress})")
         val session = rakNet.sessions.find(details.clientAddress)
 
         if(session != null) {
-            LitewareAPI.logger.info("Connection session found (2). ($mtu, ${details.clientAddress})")
+            logger.info("Connection session found (2). ($mtu, ${details.clientAddress})")
             val reply = OpenConnectionReplyTwo(Magic, details.server.guid, details.clientAddress, mtu, details)
             rakNet.send(reply)
         }
@@ -56,13 +56,13 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
             val reply = ConnectionBanned(Magic, rakNet.guid, details)
             rakNet.send(reply)
         }
-        LitewareAPI.logger.info("Received a connection (final).")
+        logger.info("Received a connection (final).")
     }
     onEachPacket<NewIncomingConnection> { (serverAddress, internalAddress, details) ->
         if(details.clientAddress in rakNet.info.blockedAddresses) {
             val reply = ConnectionBanned(Magic, rakNet.guid, details)
             rakNet.send(reply)
         }
-        LitewareAPI.logger.info("Received a connection (incoming).")
+        logger.info("Received a connection (incoming).")
     }
 }

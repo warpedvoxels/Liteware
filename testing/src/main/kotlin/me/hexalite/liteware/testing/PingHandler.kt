@@ -1,7 +1,7 @@
 @file:JvmName("PingHandler")
 package me.hexalite.liteware.testing
 
-import me.hexalite.liteware.api.LitewareAPI.logger
+import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.bootstrap.LitewareNetworkBootstrap
 import me.hexalite.liteware.network.datatypes.Magic
 import me.hexalite.liteware.network.handlers.onEachPacket

@@ -1,6 +1,6 @@
 package me.hexalite.liteware.network.pipeline
 
-import me.hexalite.liteware.api.LitewareAPI.logger
+import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionRequestOne
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionRequestTwo
