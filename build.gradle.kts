@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.serialization") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.8.0"
 }
 
 allprojects {
