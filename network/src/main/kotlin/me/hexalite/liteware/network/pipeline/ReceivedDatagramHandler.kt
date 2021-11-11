@@ -7,7 +7,7 @@ import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionReq
 import me.hexalite.liteware.network.raknet.protocol.custom.RakNetCustomPacket
 import me.hexalite.liteware.network.raknet.protocol.decodeRakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.ping.UnconnectedPing
-import me.hexalite.liteware.network.session.findCurrentSessionOrNull
+import me.hexalite.liteware.network.session.sessions
 import me.hexalite.liteware.network.udp.UDPServerEvent.DatagramReceived
 
 object ReceivedDatagramHandler : PipelineExecutor<DatagramReceived> {
@@ -25,10 +25,10 @@ object ReceivedDatagramHandler : PipelineExecutor<DatagramReceived> {
             // Check if the packet needs authentication or not.
             if (rakNetPacket.requiresSession()) {
                 // If the packet needs authentication, then check if the session is authenticated or not.
-                server.findCurrentSessionOrNull(datagram.address) ?: return
+                server.sessions.find(datagram.address) ?: return
             } else if (rakNetPacket is RakNetCustomPacket) {
                 // Let's check whether the packet is available for this session.
-                val session = server.findCurrentSessionOrNull(datagram.address)
+                val session = server.sessions.find(datagram.address)
                     ?: // If the session is not found, then the packet isn't really a custom packet.
                     return
                 // If the session is found, then the packet is really a custom packet.

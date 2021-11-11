@@ -1,3 +1,3 @@
 rootProject.name = "liteware"
 
-include("api", "nbt", "protocol", "network", "core", "world-io")
+include("testing", "api", "nbt", "protocol", "network", "core", "world-io")

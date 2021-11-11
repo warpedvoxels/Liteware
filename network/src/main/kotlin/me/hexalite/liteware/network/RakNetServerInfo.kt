@@ -1,11 +1,13 @@
 package me.hexalite.liteware.network
 
+import dev.kord.cache.api.DataCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import me.hexalite.liteware.protocol.ProtocolVersion
 import java.net.SocketAddress
 
 data class RakNetServerInfo(
+    internal val internalCache: DataCache,
     val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     val hostname: String = "127.0.0.1",
     val port: Short = 19132,

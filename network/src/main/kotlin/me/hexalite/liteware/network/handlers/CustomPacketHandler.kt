@@ -6,7 +6,7 @@ import me.hexalite.liteware.api.LitewareAPI
 import me.hexalite.liteware.network.bootstrap.LitewareNetworkBootstrap
 import me.hexalite.liteware.network.raknet.protocol.custom.RakNetCustomPacket
 
-private fun Byte.toHexadecimal() = "%02X".format(this)
+private fun Byte.toHexadecimal() = Integer.toHexString(toInt())
 
 @OptIn(ExperimentalUnsignedTypes::class)
 internal fun LitewareNetworkBootstrap.handleCustomPackets() = onEachPacket<RakNetCustomPacket> { (_, msgs) ->

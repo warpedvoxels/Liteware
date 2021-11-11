@@ -4,10 +4,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import me.hexalite.liteware.network.cache.CacheView
 import me.hexalite.liteware.network.pipeline.ReceivedDatagramHandler
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.custom.NetworkMinecraftPacket
-import me.hexalite.liteware.network.session.NetworkPlayerSession
 import me.hexalite.liteware.network.udp.LitewareUDPServer
 import java.util.*
 
@@ -17,7 +17,7 @@ class LitewareRakNetServer(val info: RakNetServerInfo) {
 
     val guid = UUID.randomUUID().leastSignificantBits
 
-    val sessions = MutableSharedFlow<NetworkPlayerSession>()
+    val cache = CacheView(info.internalCache)
 
     val packets = MutableSharedFlow<NetworkMinecraftPacket>()
 
