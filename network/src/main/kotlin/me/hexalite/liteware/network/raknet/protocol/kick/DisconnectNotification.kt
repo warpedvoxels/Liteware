@@ -9,12 +9,16 @@ import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 @RakNetPacketInfo(id = 0x15)
 data class DisconnectNotification(
     override val details: RakNetPacketDetails
-) : RakNetPacket, RakNetPacketCodec<DisconnectNotification>() {
+) : RakNetPacket {
 
-    override fun ByteReadPacket.decode(details: RakNetPacketDetails) = DisconnectNotification(details)
+    companion object Codec : RakNetPacketCodec<DisconnectNotification>() {
 
-    override fun BytePacketBuilder.encode(packet: DisconnectNotification, details: RakNetPacketDetails) {
-        // no-op
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails) = DisconnectNotification(details)
+
+        override suspend fun BytePacketBuilder.encode(packet: DisconnectNotification, details: RakNetPacketDetails) {
+            // no-op
+        }
+
     }
 
 }

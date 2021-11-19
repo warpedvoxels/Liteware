@@ -18,7 +18,7 @@ data class UnconnectedPing(
 
     companion object Codec : RakNetPacketCodec<UnconnectedPing>() {
 
-        override fun ByteReadPacket.decode(details: RakNetPacketDetails) = UnconnectedPing(
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails) = UnconnectedPing(
             time = readLong(),
             magic = readMagic() ?: error("Invalid packet; magic not found."),
             clientGuid = readLong(),

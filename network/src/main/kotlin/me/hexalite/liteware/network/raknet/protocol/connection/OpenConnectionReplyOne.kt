@@ -20,7 +20,7 @@ data class OpenConnectionReplyOne(
 
     companion object Codec : RakNetPacketCodec<OpenConnectionReplyOne>() {
 
-        override fun BytePacketBuilder.encode(packet: OpenConnectionReplyOne, details: RakNetPacketDetails) {
+        override suspend fun BytePacketBuilder.encode(packet: OpenConnectionReplyOne, details: RakNetPacketDetails) {
             writeMagic()
             writeLong(packet.serverGuid)
             writeBoolean(USE_SECURITY)

@@ -17,7 +17,7 @@ data class NewIncomingConnection(
 
     companion object Codec : RakNetPacketCodec<NewIncomingConnection>() {
 
-        override fun ByteReadPacket.decode(details: RakNetPacketDetails): NewIncomingConnection {
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails): NewIncomingConnection {
             val serverAddress = readNetworkAddress()
             val internalAddress = readNetworkAddress()
             return NewIncomingConnection(serverAddress, internalAddress, details)

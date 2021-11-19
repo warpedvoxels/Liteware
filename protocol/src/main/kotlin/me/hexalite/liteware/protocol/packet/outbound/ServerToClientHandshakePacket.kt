@@ -11,9 +11,10 @@ import me.hexalite.liteware.protocol.packet.OutboundPacket
 data class ServerToClientHandshakePacket(val jwtData: String) : OutboundPacket() {
 
     companion object Codec : MinecraftPacketCodec<ServerToClientHandshakePacket>() {
-        override fun ByteReadPacket.decode() = ServerToClientHandshakePacket(readMinecraftString())
+        override suspend fun ByteReadPacket.decode() = ServerToClientHandshakePacket(readMinecraftString())
 
-        override fun BytePacketBuilder.encode(packet: ServerToClientHandshakePacket) = writeMinecraftString(packet.jwtData)
+        override suspend fun BytePacketBuilder.encode(packet: ServerToClientHandshakePacket) =
+            writeMinecraftString(packet.jwtData)
     }
 
 }

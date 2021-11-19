@@ -11,7 +11,7 @@ data class ConnectedPing(val time: Long, override val details: RakNetPacketDetai
 
     companion object Codec: RakNetPacketCodec<ConnectedPing>() {
 
-        override fun ByteReadPacket.decode(details: RakNetPacketDetails) = ConnectedPing(readLong(), details)
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails) = ConnectedPing(readLong(), details)
 
     }
 

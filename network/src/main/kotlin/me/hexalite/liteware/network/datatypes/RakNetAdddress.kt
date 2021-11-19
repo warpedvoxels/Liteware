@@ -1,63 +1,62 @@
 @file:JvmName("RakNetAddress")
+
 package me.hexalite.liteware.network.datatypes
 
-import io.ktor.util.network.*
 import io.ktor.utils.io.core.*
-import me.hexalite.liteware.network.handlers.isIPv6
-import kotlin.experimental.and
-import kotlin.experimental.inv
+import me.hexalite.liteware.network.exceptions.DecodingException
+import java.net.Inet4Address
+import java.net.Inet6Address
+import java.net.InetSocketAddress
+import java.net.UnknownHostException
 
-private fun flip(bytes: ByteArray) {
-    for (i in bytes.indices) {
-        bytes[i] = bytes[i].inv() and 0xFF.toByte()
-    }
-}
-
-private fun getIPv6ScopeId(host: String): Int {
-    val index = host.indexOf('%')
-    return if (index == -1) 0 else host.substring(index + 1).toInt()
-}
+private val AF_INET6 = (if (System.getProperty("os.name") == "windows") 23 else 10).toUShort()
 
 @OptIn(ExperimentalUnsignedTypes::class)
-fun ByteReadPacket.readNetworkAddress(): NetworkAddress {
+fun ByteReadPacket.readNetworkAddress(): InetSocketAddress {
     val version = readByte()
-    val port = readUShort()
-    val host = when (version) {
-        4.toByte() -> {
-            val host = readBytes(4)
-            flip(host)
-            host.toString(Charsets.UTF_8)
+    return if (version.toInt() == 4) {
+        val complement = readUInt().inv().toLong()
+        val hostname = String.format(
+            "%s.%s.%s.%s", (complement shr 24) and 0xFF,
+            (complement shr 16) and 0xFF, (complement shr 8) and 0xFF,
+            complement and 0xFF
+        )
+        val port = readUShort().toInt()
+        InetSocketAddress.createUnresolved(hostname, port)
+    } else {
+        readUShort()
+        val port = readUShort().toInt()
+        readUInt()
+        val address = readBytes(16)
+        readUInt()
+        try {
+            InetSocketAddress(Inet6Address.getByAddress(null, address, 0), port)
+        } catch (e: UnknownHostException) {
+            throw DecodingException("Could not read IPv6 socket address.")
         }
-        6.toByte() -> {
-            val host = readBytes(16)
-            val scopeId = readInt()
-            val hostString = host.toString(Charsets.UTF_8)
-            "$hostString%$scopeId"
-        }
-        else -> throw IllegalArgumentException("Invalid address version: $version")
     }
-    return NetworkAddress(host, port.toInt())
 }
 
 @OptIn(ExperimentalUnsignedTypes::class, ExperimentalIoApi::class)
-fun BytePacketBuilder.writeNetworkAddress(address: NetworkAddress) {
-    val host = address.hostname
-    val hostBytes = when {
-        isIPv6(host) -> {
-            val scopeId = getIPv6ScopeId(host)
-            val hostBytes = host.split('%')[0].toByteArray(Charsets.UTF_8)
-            writeByte(6)
-            writeFully(hostBytes)
-            writeInt(scopeId)
-            hostBytes
+fun BytePacketBuilder.writeNetworkAddress(address: InetSocketAddress) {
+    when (val inet = address.address) {
+        is Inet4Address -> {
+            writeByte(4.toByte())
+            val bytes = inet.address
+            val complement: Int = (((bytes[0].toInt() and 255) shl 24) or
+                ((bytes[1].toInt() and 255) shl 16) or
+                ((bytes[2].toInt() and 255) shl 8) or
+                (bytes[3].toInt() and 255)).inv()
+            writeUInt(complement.toUInt())
+            writeUShort(address.port.toUShort())
         }
-        else -> {
-            val hostBytes = host.toByteArray(Charsets.UTF_8)
-            writeByte(4)
-            writeFully(hostBytes)
-            hostBytes
+        is Inet6Address -> {
+            writeByte(6.toByte())
+            writeUShort(AF_INET6)
+            writeUShort(address.port.toUShort())
+            writeUInt(0.toUInt())
+            writeFully(inet.address)
+            writeUInt(0.toUInt())
         }
     }
-    writeUShort(address.port.toUShort())
-    writeFully(hostBytes)
 }

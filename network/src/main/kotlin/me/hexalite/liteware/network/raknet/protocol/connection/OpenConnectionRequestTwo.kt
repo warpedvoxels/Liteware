@@ -21,7 +21,7 @@ data class OpenConnectionRequestTwo(
 
     companion object Codec : RakNetPacketCodec<OpenConnectionRequestTwo>() {
 
-        override fun ByteReadPacket.decode(details: RakNetPacketDetails) = OpenConnectionRequestTwo(
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails) = OpenConnectionRequestTwo(
             magic = readMagic() ?: error("Invalid open connection request two; magic not found."),
             serverAddress = readNetworkAddress(),
             mtu = readShort(),

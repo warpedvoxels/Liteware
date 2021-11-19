@@ -19,7 +19,7 @@ data class OpenConnectionRequestOne(
 
     companion object Codec : RakNetPacketCodec<OpenConnectionRequestOne>() {
 
-        override fun ByteReadPacket.decode(details: RakNetPacketDetails) = OpenConnectionRequestOne(
+        override suspend fun ByteReadPacket.decode(details: RakNetPacketDetails) = OpenConnectionRequestOne(
             readMagic() ?: error("Invalid open connection request one; magic not found."),
             readUByte(),
             (remaining + RAKNET_MTU_PADDING).toShort(),

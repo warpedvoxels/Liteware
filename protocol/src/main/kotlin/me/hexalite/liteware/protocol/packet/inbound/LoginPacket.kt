@@ -17,13 +17,13 @@ data class LoginPacket(val protocolVersion: Int, val chainData: List<String>, va
 
     companion object Codec: MinecraftPacketCodec<LoginPacket>() {
 
-        override fun BytePacketBuilder.encode(packet: LoginPacket) = with(packet) {
+        override suspend fun BytePacketBuilder.encode(packet: LoginPacket) = with(packet) {
             writeIntBigEndian(protocolVersion)
             writeMinecraftString(Json.encodeToString(chainData))
             writeMinecraftString(skinData)
         }
 
-        override fun ByteReadPacket.decode() = LoginPacket(
+        override suspend fun ByteReadPacket.decode() = LoginPacket(
             readIntBigEndian(),
             Json.decodeFromString(readMinecraftString()),
             readMinecraftString()

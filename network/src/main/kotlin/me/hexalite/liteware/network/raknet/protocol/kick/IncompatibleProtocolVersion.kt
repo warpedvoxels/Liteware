@@ -19,7 +19,7 @@ data class IncompatibleProtocolVersion(
     companion object Codec : RakNetPacketCodec<IncompatibleProtocolVersion>() {
 
         @OptIn(ExperimentalIoApi::class)
-        override fun BytePacketBuilder.encode(packet: IncompatibleProtocolVersion, details: RakNetPacketDetails) {
+        override suspend fun BytePacketBuilder.encode(packet: IncompatibleProtocolVersion, details: RakNetPacketDetails) {
             writeByte(packet.protocol)
             writeMagic()
             writeLong(packet.serverGuid)

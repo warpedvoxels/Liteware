@@ -1,7 +1,7 @@
 package me.hexalite.liteware.network.raknet.protocol
 
-import io.ktor.util.network.*
 import me.hexalite.liteware.network.LitewareRakNetServer
+import java.net.InetSocketAddress
 
 /**
  * Learn more about RakNet at:
@@ -13,5 +13,5 @@ interface RakNetPacket {
 
 data class RakNetPacketDetails(
     val server: LitewareRakNetServer,
-    val clientAddress: NetworkAddress
+    val clientAddress: InetSocketAddress
 )

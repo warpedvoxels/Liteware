@@ -17,7 +17,7 @@ data class ConnectionBanned(
 
     companion object Codec : RakNetPacketCodec<ConnectionBanned>() {
 
-        override fun BytePacketBuilder.encode(packet: ConnectionBanned, details: RakNetPacketDetails) {
+        override suspend fun BytePacketBuilder.encode(packet: ConnectionBanned, details: RakNetPacketDetails) {
             writeMagic()
             writeLong(packet.serverGuid)
         }

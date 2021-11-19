@@ -7,9 +7,11 @@ import me.hexalite.liteware.protocol.packet.MinecraftPacket
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-fun <T : MinecraftPacket> findPacketId(clazz: KClass<T>) = clazz.findAnnotation<MinecraftPacketInfo>()?.id
+fun <T : MinecraftPacket> findMinecraftPacketId(clazz: KClass<T>) = clazz.findAnnotation<MinecraftPacketInfo>()?.id
     ?: error("Target class is not annotated with @MinecraftPacketInfo.")
 
-inline fun <reified T : MinecraftPacket> findPacketId() = findPacketId(T::class)
+inline fun <reified T : MinecraftPacket> findMinecraftPacketId() = findMinecraftPacketId(T::class)
 
-inline fun MinecraftPacket.id() = findPacketId(this::class)
+inline fun <T : MinecraftPacket> KClass<T>.id() = findMinecraftPacketId(this)
+
+inline fun MinecraftPacket.id() = findMinecraftPacketId(this::class)

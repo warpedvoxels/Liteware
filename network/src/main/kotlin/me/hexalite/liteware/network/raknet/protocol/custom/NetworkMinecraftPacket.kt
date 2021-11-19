@@ -1,10 +1,8 @@
 package me.hexalite.liteware.network.raknet.protocol.custom
 
-import io.ktor.util.network.*
-import me.hexalite.liteware.protocol.packet.MinecraftPacket
+import java.net.InetSocketAddress
 
 data class NetworkMinecraftPacket(
-    val rawPacket: EncapsulatedPacket,
-    val minecraftPacket: MinecraftPacket,
-    val clientAddress: NetworkAddress
+    val gamePacket: GamePacket,
+    val clientAddress: InetSocketAddress
 )

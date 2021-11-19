@@ -1,14 +1,19 @@
 package me.hexalite.liteware.network.pipeline
 
 import me.hexalite.liteware.api.logging.logger
+import me.hexalite.liteware.network.codec.decode
+import me.hexalite.liteware.network.handlers.hex
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
+import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionRequestOne
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionRequestTwo
-import me.hexalite.liteware.network.raknet.protocol.custom.RakNetCustomPacket
-import me.hexalite.liteware.network.raknet.protocol.decodeRakNetPacket
+import me.hexalite.liteware.network.raknet.protocol.custom.FrameSet
+import me.hexalite.liteware.network.raknet.protocol.custom.UnknownPacket
+import me.hexalite.liteware.network.raknet.protocol.findRakNetPacketCodec
 import me.hexalite.liteware.network.raknet.protocol.ping.UnconnectedPing
 import me.hexalite.liteware.network.session.sessions
 import me.hexalite.liteware.network.udp.UDPServerEvent.DatagramReceived
+import java.net.InetSocketAddress
 
 object ReceivedDatagramHandler : PipelineExecutor<DatagramReceived> {
 
@@ -17,28 +22,29 @@ object ReceivedDatagramHandler : PipelineExecutor<DatagramReceived> {
         if (datagram.address in server.info.blockedAddresses) {
             return
         }
-        runCatching {
+        try {
             val packet = datagram.packet
             val packetId = packet.readByte()
-            val rakNetPacket = decodeRakNetPacket(packetId, datagram, server)
+
+            val rakNetPacket = findRakNetPacketCodec(packetId)
+                .decode(packet, RakNetPacketDetails(server, datagram.address as InetSocketAddress))
 
             // Check if the packet needs authentication or not.
             if (rakNetPacket.requiresSession()) {
                 // If the packet needs authentication, then check if the session is authenticated or not.
                 server.sessions.find(datagram.address) ?: return
-            } else if (rakNetPacket is RakNetCustomPacket) {
+            } else if (rakNetPacket is FrameSet) {
                 // Let's check whether the packet is available for this session.
-                val session = server.sessions.find(datagram.address)
+                server.sessions.find(datagram.address)
                     ?: // If the session is not found, then the packet isn't really a custom packet.
                     return
-                // If the session is found, then the packet is really a custom packet.
-                // Let's handle the packet by emitting it to the Flow so that the packet handler can handle it.
-                return server.rakNetPackets.emit(rakNetPacket)
+            } else if (rakNetPacket is UnknownPacket) {
+                return logger.info("An unknown packet has been received (${packetId.hex()}).")
             }
 
             server.rakNetPackets.emit(rakNetPacket)
-        }.onFailure {
-            logger.error("Failed to handle RakNet packet", it)
+        } catch (error: Exception) {
+            logger.error("Failed to handle RakNet packet", error)
         }
     }
 

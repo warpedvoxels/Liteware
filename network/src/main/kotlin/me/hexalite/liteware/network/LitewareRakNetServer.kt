@@ -19,9 +19,9 @@ class LitewareRakNetServer(val info: RakNetServerInfo) {
 
     val cache = CacheView(info.internalCache)
 
-    val packets = MutableSharedFlow<NetworkMinecraftPacket>()
+    val packets = MutableSharedFlow<NetworkMinecraftPacket>(extraBufferCapacity = Int.MAX_VALUE)
 
-    val rakNetPackets = MutableSharedFlow<RakNetPacket>()
+    val rakNetPackets = MutableSharedFlow<RakNetPacket>(extraBufferCapacity = Int.MAX_VALUE)
 
     fun start() {
         val pipelineJob = SupervisorJob()

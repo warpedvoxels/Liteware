@@ -9,11 +9,11 @@ import me.hexalite.liteware.protocol.packet.InboundPacket
 object ClientToServerHandshakePacket: InboundPacket() {
 
     object Codec: MinecraftPacketCodec<ClientToServerHandshakePacket>() {
-        override fun ByteReadPacket.decode(): ClientToServerHandshakePacket {
+        override suspend fun ByteReadPacket.decode(): ClientToServerHandshakePacket {
             return ClientToServerHandshakePacket
         }
 
-        override fun BytePacketBuilder.encode(packet: ClientToServerHandshakePacket) {
+        override suspend fun BytePacketBuilder.encode(packet: ClientToServerHandshakePacket) {
             // no-op
         }
     }

@@ -13,8 +13,8 @@ import me.hexalite.liteware.protocol.ProtocolVersion
 internal suspend fun LitewareNetworkBootstrap.handlePings() = onEachPacket<UnconnectedPing> { (time, _, _, details) ->
     logger.info("Received a ping from ${details.clientAddress}")
     // todo: configurable motds
-    val v = ProtocolVersion.Bedrock_1_17_10_to_1_17_11
-    val serverId = "MCPE;Liteware Server;$v;1.17.11;0;10;13253860892328930865;Unavailable;Survival;1;19132;19133;"
+    val v = ProtocolVersion.Bedrock_1_17_40_to_1_17_41
+    val serverId = "MCPE;Liteware Server;$v;1.17.41;0;10;13253860822328930865;Unavailable;Survival;1;19132;19133;"
     val reply = UnconnectedPong(time, details.server.guid, Magic, serverId, details)
     rakNet.send(reply)
 }

@@ -13,9 +13,9 @@ data class PlayStatusPacket(val loginStatus: LoginStatus): OutboundPacket() {
 
     companion object Codec: MinecraftPacketCodec<PlayStatusPacket>() {
 
-        override fun ByteReadPacket.decode() = PlayStatusPacket(LoginStatus(readIntBigEndian()))
+        override suspend fun ByteReadPacket.decode() = PlayStatusPacket(LoginStatus(readIntBigEndian()))
 
-        override fun BytePacketBuilder.encode(packet: PlayStatusPacket) = writeIntBigEndian(packet.loginStatus.ordinal)
+        override suspend fun BytePacketBuilder.encode(packet: PlayStatusPacket) = writeIntBigEndian(packet.loginStatus.ordinal)
 
     }
 

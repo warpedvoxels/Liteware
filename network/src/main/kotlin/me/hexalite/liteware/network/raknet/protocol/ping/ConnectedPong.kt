@@ -15,7 +15,7 @@ data class ConnectedPong(
 
     companion object Codec : RakNetPacketCodec<ConnectedPong>() {
 
-        override fun BytePacketBuilder.encode(packet: ConnectedPong, details: RakNetPacketDetails) {
+        override suspend fun BytePacketBuilder.encode(packet: ConnectedPong, details: RakNetPacketDetails) {
             writeLong(packet.pingTime)
             writeLong(packet.pongTime)
         }

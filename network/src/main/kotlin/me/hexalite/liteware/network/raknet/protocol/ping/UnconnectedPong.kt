@@ -11,7 +11,7 @@ import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 
 @RakNetPacketInfo(0x1c)
 data class UnconnectedPong(
-    val time: Long,
+    val timestamp: Long,
     val serverGuid: Long,
     val magic: Magic,
     val serverId: String,
@@ -20,8 +20,8 @@ data class UnconnectedPong(
 
     companion object Codec : RakNetPacketCodec<UnconnectedPong>() {
 
-        override fun BytePacketBuilder.encode(packet: UnconnectedPong, details: RakNetPacketDetails) {
-            writeLong(packet.time)
+        override suspend fun BytePacketBuilder.encode(packet: UnconnectedPong, details: RakNetPacketDetails) {
+            writeLong(packet.timestamp)
             writeLong(packet.serverGuid)
             writeMagic()
             writeRakNetString(packet.serverId)
