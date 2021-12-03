@@ -11,7 +11,7 @@ data class NetworkPlayerSession(
     val address: InetSocketAddress,
     val mtu: Short,
     val server: LitewareRakNetServer,
-    internal var guid: Long = 0
+    val guid: Long = 0
 )
 
 inline val NetworkPlayerSession.adjustedMtu: Short

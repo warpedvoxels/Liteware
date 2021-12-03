@@ -1,7 +1,7 @@
 package me.hexalite.liteware.network.raknet.protocol.login
 
 import io.ktor.utils.io.core.*
-import me.hexalite.liteware.network.annotations.RakNetPacketInfo
+import me.hexalite.liteware.network.annotations.RakNetPacketIdentity
 import me.hexalite.liteware.network.codec.RakNetPacketCodec
 import me.hexalite.liteware.network.datatypes.writeNetworkAddress
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
@@ -9,7 +9,7 @@ import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 import java.net.Inet4Address
 import java.net.InetSocketAddress
 
-@RakNetPacketInfo(0x10)
+@RakNetPacketIdentity(0x10)
 @OptIn(ExperimentalStdlibApi::class)
 data class ConnectionRequestAccepted(
     val clientAddress: InetSocketAddress,

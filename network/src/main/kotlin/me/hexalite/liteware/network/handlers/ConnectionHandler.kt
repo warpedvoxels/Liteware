@@ -3,6 +3,7 @@
 package me.hexalite.liteware.network.handlers
 
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.bootstrap.LitewareNetworkBootstrap
 import me.hexalite.liteware.network.datatypes.Magic
@@ -25,7 +26,7 @@ import me.hexalite.liteware.network.raknet.protocol.sendFramed
 import me.hexalite.liteware.network.session.NetworkPlayerSession
 import me.hexalite.liteware.network.session.sessions
 
-@OptIn(ExperimentalUnsignedTypes::class, ExperimentalIoApi::class)
+@OptIn(ExperimentalUnsignedTypes::class, ExperimentalIoApi::class, ObsoleteCoroutinesApi::class)
 internal suspend fun LitewareNetworkBootstrap.handleConnections() {
     onEachPacket<OpenConnectionRequestOne> { (_, protocol, mtu, details) ->
         if (details.clientAddress in rakNet.info.blockedAddresses) {
@@ -38,6 +39,7 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
             return@onEachPacket rakNet.send(reply)
         }
         if (protocol.toByte() != RAKNET_PROTOCOL_VERSION) {
+            logger.info("Connection rejected for ${details.clientAddress}; protocol version mismatch (${protocol.toByte()} != $RAKNET_PROTOCOL_VERSION).")
             val reply = IncompatibleProtocolVersion(RAKNET_PROTOCOL_VERSION, Magic, rakNet.guid, details)
             return@onEachPacket rakNet.send(reply)
         }
@@ -53,7 +55,7 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
     onEachPacket<OpenConnectionRequestTwo> { (_, _, mtu, guid, details) ->
         val session = rakNet.sessions.find(details.clientAddress)
         if (session != null) {
-            session.guid = guid
+            rakNet.sessions.create(session.copy(guid = guid))
             logger.info("Connection session found (2). ($mtu, $guid, ${details.clientAddress})")
             val reply = OpenConnectionReplyTwo(Magic, details.server.guid, details.clientAddress, mtu, details)
             rakNet.send(reply)
@@ -63,6 +65,7 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
         if (useSecurity) {
             logger.info("Connection rejected for ${details.clientAddress}; security is not supported.")
             val reply = ConnectionBanned(Magic, rakNet.guid, details)
+            rakNet.sessions.delete(details.clientAddress)
             return@onEachPacket rakNet.send(reply)
         }
         val session = rakNet.sessions.find(details.clientAddress)
@@ -70,6 +73,7 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
             if (guid != session.guid) {
                 logger.info("Connection rejected for ${details.clientAddress}; GUID criteria not met ($guid != ${session.guid}).")
                 val reply = ConnectionBanned(Magic, rakNet.guid, details)
+                rakNet.sessions.delete(details.clientAddress)
                 return@onEachPacket rakNet.send(reply)
             }
             logger.info("Accepting final connection for ${details.clientAddress}.")
@@ -78,11 +82,10 @@ internal suspend fun LitewareNetworkBootstrap.handleConnections() {
         }
     }
     onEachPacket<NewIncomingConnection> { (serverAddress, internalAddress, details) ->
-        logger.info("Received a connection (incoming) from ${details.clientAddress}.")
+        logger.info("Successfully started a final session for ${details.clientAddress}.")
     }
     onEachPacket<DisconnectNotification> { (details) ->
         logger.info("Connection terminated for ${details.clientAddress}.")
         rakNet.sessions.delete(details.clientAddress)
     }
 }
-

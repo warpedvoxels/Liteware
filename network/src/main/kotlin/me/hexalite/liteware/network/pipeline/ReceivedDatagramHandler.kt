@@ -2,7 +2,6 @@ package me.hexalite.liteware.network.pipeline
 
 import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.codec.decode
-import me.hexalite.liteware.network.handlers.hex
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 import me.hexalite.liteware.network.raknet.protocol.connection.OpenConnectionRequestOne
@@ -13,6 +12,7 @@ import me.hexalite.liteware.network.raknet.protocol.findRakNetPacketCodec
 import me.hexalite.liteware.network.raknet.protocol.ping.UnconnectedPing
 import me.hexalite.liteware.network.session.sessions
 import me.hexalite.liteware.network.udp.UDPServerEvent.DatagramReceived
+import me.hexalite.liteware.protocol.packet.hex
 import java.net.InetSocketAddress
 
 object ReceivedDatagramHandler : PipelineExecutor<DatagramReceived> {

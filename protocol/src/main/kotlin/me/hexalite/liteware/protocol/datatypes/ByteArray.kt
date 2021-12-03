@@ -3,11 +3,11 @@ package me.hexalite.liteware.protocol.datatypes
 import io.ktor.utils.io.core.*
 
 fun ByteReadPacket.readMinecraftByteArray(): ByteArray {
-    val length = readVarInt()
-    return readBytes(length.integer)
+    val length = readUVarInt()
+    return readBytes(length.uint.toInt())
 }
 
 fun BytePacketBuilder.writeMinecraftByteArray(bytes: ByteArray) {
-    writeVarInt(VarInt(bytes.size))
+    writeUVarInt(UVarInt(bytes.size.toUInt()))
     writeFully(bytes)
 }

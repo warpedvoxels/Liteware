@@ -5,7 +5,7 @@ package me.hexalite.liteware.network.raknet.protocol
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.core.*
 import me.hexalite.liteware.network.LitewareRakNetServer
-import me.hexalite.liteware.network.annotations.RakNetPacketInfo
+import me.hexalite.liteware.network.annotations.RakNetPacketIdentity
 import me.hexalite.liteware.network.codec.RakNetPacketCodec
 import me.hexalite.liteware.network.codec.encode
 import me.hexalite.liteware.network.datatypes.RakNetReliability
@@ -35,27 +35,32 @@ import kotlin.reflect.full.findAnnotation
 
 
 fun <T : RakNetPacket> findRakNetPacketId(clazz: KClass<T>): Byte =
-    (clazz.findAnnotation<RakNetPacketInfo>()?.id ?: 0x80.toByte())
+    (clazz.findAnnotation<RakNetPacketIdentity>()?.id ?: 0x80.toByte())
 
 inline fun <reified T : RakNetPacket> findRakNetPacketId() = findRakNetPacketId(T::class)
 
-fun findRakNetPacketCodec(id: Byte) = when (id) {
-    findRakNetPacketId(UnconnectedPing::class) -> UnconnectedPing.Codec
-    findRakNetPacketId(UnconnectedPong::class) -> UnconnectedPong.Codec
-    findRakNetPacketId(ConnectedPing::class) -> ConnectedPing.Codec
-    findRakNetPacketId(ConnectedPong::class) -> ConnectedPong.Codec
-    findRakNetPacketId(OpenConnectionRequestOne::class) -> OpenConnectionRequestOne.Codec
-    findRakNetPacketId(OpenConnectionRequestTwo::class) -> OpenConnectionRequestTwo.Codec
-    findRakNetPacketId(OpenConnectionReplyOne::class) -> OpenConnectionReplyOne.Codec
-    findRakNetPacketId(OpenConnectionReplyTwo::class) -> OpenConnectionReplyTwo.Codec
-    findRakNetPacketId(ConnectionRequest::class) -> ConnectionRequest.Codec
-    findRakNetPacketId(ConnectionRequestAccepted::class) -> ConnectionRequestAccepted.Codec
-    findRakNetPacketId(NewIncomingConnection::class) -> NewIncomingConnection.Codec
-    findRakNetPacketId(ConnectedPing::class) -> ConnectedPing.Codec
-    findRakNetPacketId(ConnectionBanned::class) -> ConnectionBanned.Codec
-    findRakNetPacketId(DisconnectNotification::class) -> DisconnectNotification.Codec
-    findRakNetPacketId(IncompatibleProtocolVersion::class) -> IncompatibleProtocolVersion.Codec
-    else -> if (FrameSet.IDs.any { it == id }) FrameSet.Codec else UnknownPacket.Codec
+fun findRakNetPacketCodec(id: Byte): RakNetPacketCodec<out RakNetPacket> {
+    if (FrameSet.IDs.any { it == id }) {
+        return FrameSet.Codec
+    }
+    return when (id) {
+        findRakNetPacketId(UnconnectedPing::class) -> UnconnectedPing.Codec
+        findRakNetPacketId(UnconnectedPong::class) -> UnconnectedPong.Codec
+        findRakNetPacketId(ConnectedPing::class) -> ConnectedPing.Codec
+        findRakNetPacketId(ConnectedPong::class) -> ConnectedPong.Codec
+        findRakNetPacketId(OpenConnectionRequestOne::class) -> OpenConnectionRequestOne.Codec
+        findRakNetPacketId(OpenConnectionRequestTwo::class) -> OpenConnectionRequestTwo.Codec
+        findRakNetPacketId(OpenConnectionReplyOne::class) -> OpenConnectionReplyOne.Codec
+        findRakNetPacketId(OpenConnectionReplyTwo::class) -> OpenConnectionReplyTwo.Codec
+        findRakNetPacketId(ConnectionRequest::class) -> ConnectionRequest.Codec
+        findRakNetPacketId(ConnectionRequestAccepted::class) -> ConnectionRequestAccepted.Codec
+        findRakNetPacketId(NewIncomingConnection::class) -> NewIncomingConnection.Codec
+        findRakNetPacketId(ConnectedPing::class) -> ConnectedPing.Codec
+        findRakNetPacketId(ConnectionBanned::class) -> ConnectionBanned.Codec
+        findRakNetPacketId(DisconnectNotification::class) -> DisconnectNotification.Codec
+        findRakNetPacketId(IncompatibleProtocolVersion::class) -> IncompatibleProtocolVersion.Codec
+        else -> UnknownPacket.Codec
+    }
 }
 
 @OptIn(ExperimentalIoApi::class)

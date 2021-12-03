@@ -1,7 +1,7 @@
 package me.hexalite.liteware.network.raknet.protocol.ping
 
 import io.ktor.utils.io.core.*
-import me.hexalite.liteware.network.annotations.RakNetPacketInfo
+import me.hexalite.liteware.network.annotations.RakNetPacketIdentity
 import me.hexalite.liteware.network.codec.RakNetPacketCodec
 import me.hexalite.liteware.network.datatypes.Magic
 import me.hexalite.liteware.network.datatypes.writeMagic
@@ -9,7 +9,7 @@ import me.hexalite.liteware.network.datatypes.writeRakNetString
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 
-@RakNetPacketInfo(0x1c)
+@RakNetPacketIdentity(0x1c)
 data class UnconnectedPong(
     val timestamp: Long,
     val serverGuid: Long,

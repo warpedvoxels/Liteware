@@ -8,4 +8,6 @@ object Versioning {
 
     const val Serialization = "1.3.1"
 
+    const val DateTime = "0.3.1"
+
 }

@@ -24,8 +24,9 @@ allprojects {
     dependencies {
         testImplementation(kotlin("test"))
         api(kotlin("reflect"))
-        api("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versioning.Serialization}")
-        api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versioning.Coroutines}")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${Versioning.Serialization}")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versioning.Coroutines}")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:${Versioning.DateTime}")
     }
 
     tasks.test {

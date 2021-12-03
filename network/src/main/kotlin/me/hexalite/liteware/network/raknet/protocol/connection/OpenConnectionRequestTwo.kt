@@ -2,7 +2,7 @@ package me.hexalite.liteware.network.raknet.protocol.connection
 
 import io.ktor.util.network.*
 import io.ktor.utils.io.core.*
-import me.hexalite.liteware.network.annotations.RakNetPacketInfo
+import me.hexalite.liteware.network.annotations.RakNetPacketIdentity
 import me.hexalite.liteware.network.codec.RakNetPacketCodec
 import me.hexalite.liteware.network.datatypes.Magic
 import me.hexalite.liteware.network.datatypes.readMagic
@@ -10,7 +10,7 @@ import me.hexalite.liteware.network.datatypes.readNetworkAddress
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacket
 import me.hexalite.liteware.network.raknet.protocol.RakNetPacketDetails
 
-@RakNetPacketInfo(0x07)
+@RakNetPacketIdentity(0x07)
 data class OpenConnectionRequestTwo(
     val magic: Magic,
     val serverAddress: NetworkAddress,

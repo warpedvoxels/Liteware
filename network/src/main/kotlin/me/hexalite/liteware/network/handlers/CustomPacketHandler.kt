@@ -2,6 +2,7 @@
 
 package me.hexalite.liteware.network.handlers
 
+import io.ktor.utils.io.core.*
 import me.hexalite.liteware.api.logging.logger
 import me.hexalite.liteware.network.bootstrap.LitewareNetworkBootstrap
 import me.hexalite.liteware.network.codec.RakNetPacketCodec
@@ -13,22 +14,27 @@ import me.hexalite.liteware.network.raknet.protocol.custom.GamePacket
 import me.hexalite.liteware.network.raknet.protocol.custom.UnknownPacket
 import me.hexalite.liteware.network.raknet.protocol.findRakNetPacketCodec
 import me.hexalite.liteware.network.raknet.protocol.findRakNetPacketId
+import me.hexalite.liteware.protocol.codec.decode
+import me.hexalite.liteware.protocol.compression.Zlib
+import me.hexalite.liteware.protocol.datatypes.readUVarInt
+import me.hexalite.liteware.protocol.packet.findMinecraftPacketCodecOrNull
+import me.hexalite.liteware.protocol.packet.hex
 
-fun Byte.hex(): String {
-    val hexString = Integer.toHexString(this.toInt() and 0xFF)
-    return if (hexString.length % 2 != 0) "0x0${hexString.uppercase()}" else "0x${hexString.uppercase()}"
-}
+private val gamePacketId = findRakNetPacketId<GamePacket>()
 
 internal fun LitewareNetworkBootstrap.handleCustomPackets() {
-    val gamePacketId = findRakNetPacketId<GamePacket>()
     onEachPacket<FrameSet> { (_, messages, details) ->
         for (packet in messages) {
-            val packetId = packet.data.readByte()
-            val codec = findRakNetPacketCodec(packetId)
-            when {
-                codec !is UnknownPacket.Codec -> handleRakNetPacket(packetId, codec, packet, details)
-                packetId == gamePacketId -> handleGamePacket(packetId, packet, details)
-                else -> logger.info("Unknown custom packet received, id: ${packetId.hex()} - ${details.clientAddress}")
+            when (val packetId = packet.data.readByte()) {
+                gamePacketId -> handleGamePacket(packet, details)
+                else -> {
+                    val codec = findRakNetPacketCodec(packetId)
+                    if (codec !is UnknownPacket.Codec) {
+                        handleRakNetPacket(packetId, codec, packet, details)
+                        continue
+                    }
+                    logger.info("Unknown custom packet received, id: ${packetId.hex()} - ${details.clientAddress}")
+                }
             }
         }
     }
@@ -47,15 +53,26 @@ private suspend fun LitewareNetworkBootstrap.handleRakNetPacket(
     rakNet.rakNetPackets.emit(codec.decode(packet.data, details))
 }
 
+// bad code that need to be fixed
 @OptIn(ExperimentalUnsignedTypes::class)
-private suspend fun LitewareNetworkBootstrap.handleGamePacket(
-    packetId: Byte,
-    packet: EncapsulatedPacket,
-    details: RakNetPacketDetails
-) {
-    logger.debug("Custom minecraft packet received, id: ${packetId.hex()} - ${details.clientAddress}")
-/*    val codec = findMinecraftPacketCodec(packet.data.readUByte().toByte())
-    val gamePacket = GamePacket(codec.decode(packet.data), details)
+private suspend fun LitewareNetworkBootstrap.handleGamePacket(packet: EncapsulatedPacket, details: RakNetPacketDetails) {
+    val data = Zlib.Packet.decompress(packet.data)
+    while (data.remaining > 0) {
+        val length = data.readUVarInt().toInt()
+        logger.debug("Received a game packet from ${details.clientAddress}, length: $length")
+        if (length > data.remaining) {
+            return logger.info("[${details.clientAddress} » NETWORK] Length of packet is greater than remaining data. ($length > ${data.remaining})")
+        }
+        val data = ByteReadPacket(data.readBytes(length))
+        val header = data.readUVarInt().toInt()
+        val id = header and 0x3ff
+
+        logger.debug("Custom minecraft packet received, id: ${id.hex()} - ${details.clientAddress}")
+        val codec = findMinecraftPacketCodecOrNull(id) ?: return logger.info("Unknown minecraft packet with id '${id.hex()}'")
+        println(codec.decode(data))
+    }
+/*    val gamePacket = GamePacket(codec.decode(data), details)
     rakNet.packets.emit(NetworkMinecraftPacket(gamePacket, details.clientAddress))*/
 }
+
 
